@@ -1,0 +1,11 @@
+tweepy
+tqdm
+pandas
+feather-format
+pyarrow
+dash
+dash-daq
+dash-renderer
+dash-html-components
+dash-core-components
+plotly

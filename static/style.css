@@ -1,0 +1,134 @@
+/* main */
+body,html {
+    border: 0px;
+}
+
+.main-container tr {
+    border: dashed;
+    width: 60%
+}
+
+.main-container {
+    margin-right: auto;
+    margin-left: auto;
+    display: table;
+}
+
+/* query form */
+.query-form{
+    width:60%;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    margin-right: auto;
+    margin-left: auto;
+    display: table;
+}
+.querys{
+    width: 84%;
+}
+.qlabel{
+    width:15%;
+    margin-right: 1%;
+    text-align: right;
+}
+.query-form button{
+    margin:10px;
+    margin-right: auto;
+    margin-left: auto;
+    display: table;
+}
+
+
+/* table */
+.main-table{
+    width:60%;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+/* list form*/
+.ulist{
+    width: 150px;
+    font-size: 11px;
+    display: grid;
+    padding: .30rem;
+}
+.ulist label{
+    margin: 0px;
+}
+.ulist button{
+  margin-top: 5px;
+  display: inline-block;
+  padding: 0.3em 1em;
+  text-decoration: none;
+  color: #021901;
+  border: solid 2px #021901;
+  border-radius: 3px;
+  transition: .4s;
+}
+
+.ulist button:hover {
+  background: #021901;
+  color: white;
+}
+
+/* prof images */
+.uimages {
+    border: 0px;
+    padding-right: 0px;
+}
+
+.images{
+    display: inline-flex;
+    padding: .30rem;
+}
+
+.icon {
+    height: 90px;
+    width: 90px;
+}
+
+.banner {
+    height: 90px;
+    width: 180px;
+}
+.keyicon{
+    width: 35px;
+    height: 35px;
+    padding: 5px;
+}
+.fkey{
+	padding-bottom: 4px;
+    padding-top: 7px;
+}
+.vericon{
+    width: 35px;
+    height: 35px;
+    padding: 5px;
+}
+
+/* prof Info*/
+.uinfo tr{
+    font-size: 11px;
+    border: 0px;
+}
+.uinfo td{
+    border: 0px;
+    padding: 1px;
+    word-break: break-all;
+}
+.uinfo{
+    padding: .30rem;
+    width: 250px;
+    display: inline-block;
+}
+.keys{
+    width:50px;
+    text-align: right;
+}
+
+/* tweet */
+.tweet{
+    font-size: 11px;
+    width: 200px;
+}

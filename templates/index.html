@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="main-container">
+    <div class='query-form'>
+        <label class="qlabel">query:</label><input type="text" class="querys nq" value={{req.nq}} />
+        <label class="qlabel">from:</label><input type="text" class="querys fcrq" value={{req.fcrq}} />
+        <label class="qlabel">to:</label><input type="text" class="querys tcrq" value={{req.tcrq}} />
+        <label class="qlabel">fromtw:</label><input type="text" class="querys fltq" value={{req.fltq}} />
+        <label class="qlabel">totw:</label><input type="text" class="querys tltq" value={{req.tltq}} />
+        <label class="qlabel">sort:</label><input type="text" class="querys sorq" value={{req.sorq}} />
+        <label class="qlabel">ascend:</label><input type="text" class="querys asq" value={{req.asq}} />
+        <label class="qlabel">sample:</label><input type="text" class="querys samq" value={{req.samq}} />
+        <br>
+        <button class='qsubmit'>submit</button>
+        <button class='qmake'>gen url</button>
+        <button onclick="location.href='./'">reset</button>
+    </div>
+    <div id='table'></div>
+</div>
+{% endblock %}

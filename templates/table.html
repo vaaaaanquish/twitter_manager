@@ -1,0 +1,95 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="main-container">
+        <div class="table-responsive">
+            <table class="main-table" id="flights">
+                <thead>
+                    <tr>
+                        <th scope="col">List</th>
+                        <th scope="col">Images</th>
+                        <th scope="col">Info</th>
+                        <th scope="col">Tweet</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    <tr id={{ user.idstr}}>
+                        <!-- User List -->
+                        <td>
+                            <div class="ulist" action="/list_submit" id='submitlist_{{user.idstr}}'>
+                                {% for u in user.ulist %}
+                                    {% if u.flag %}
+                                    <label><input type="checkbox" name="uls" value={{ u.key }} checked>{{ u.key }}</label>
+                                    {% else %}
+                                    <label><input type="checkbox" name="uls" value={{ u.key }}>{{ u.key }}</label>
+                                    {% endif %}
+                                {% endfor %}
+                                <button class='lsubmit'>save</button>
+                            </div>
+                        </td>
+
+                        <!-- Images -->
+                        <td class="uimages">
+                            <table>
+                                <tr><td>
+                                        <a href={{user.images.profurl}} target=”_blan">{{ user.images.name }} {{ user.images.sn }}</a>
+                                </td></tr>
+                                <tr><td class='images'>
+                                    <img class="banner" src={{ user.images.banner }} />
+                                    <img class="icon" src={{ user.images.icon }} /> 
+                                </td></tr>
+                                <tr><td class='images'>
+                                    <div class="switchs ar">
+                                        {% if user.images.following %}
+                                            <input type="checkbox" id="switch_{{ user.idstr }}" checked>
+                                        {% else %}
+                                            <input type="checkbox" id="switch_{{ user.idstr }}">
+                                        {% endif %}
+                                        <label class="swInput" for="switch_{{ user.idstr }}"><span></span></label>
+                                        <div class="swImg"></div>
+                                    </div>
+
+                                    {% if user.images.followed %}
+                                        <img src="/static/followii.jpg" class='keyicon fkey' />
+                                    {% endif %}
+                                    {% if user.images.protect %}
+                                        <img src="/static/key.jpg" class='keyicon' />
+                                    {% endif %}
+                                    {% if user.images.verified %}
+                                        <img src="/static/verified.jpg" class='vericon' />
+                                    {% endif %}
+
+                                </td></tr>
+                            </table>
+                        </td>
+
+                        <!-- Info -->
+                        <td class="uinfo"> 
+                            <table>
+                                <tr><td class="keys">created:</td><td>{{ user.info.created }}</td></tr>
+                                <tr><td class="keys">lang:</td><td>{{ user.info.lang }}</td></tr>
+                                <tr><td class="keys">location:</td><td>{{ user.info.location }}</td></tr>
+                                <tr><td class="keys">url:</td><td><a href={{ user.info.url }} target=”_blank>{{ user.info.urlt }}</a></td></tr>
+                                <tr><td class="keys">tweet:</td><td>{{ user.info.tweet }}</td></tr>
+                                <tr><td class="keys">follower:</td><td>{{ user.info.follower }}</td></tr>
+                                <tr><td class="keys">follow:</td><td>{{ user.info.follow }}</td></tr>
+                                <tr><td class="keys">fav:</td><td>{{ user.info.fav }}</td></tr>
+                                <tr><td class="keys">list:</td><td>{{ user.info.inlist }}</td></tr>
+                                <tr><td class="keys">bio:</td><td>{{ user.info.bio }}</td></tr>
+                            </table>
+                        </td>
+
+                        <!-- Top Tweet -->
+                        <td class="tweet"> 
+                            <p>{{ user.tweet.text }}</p> 
+                            <p>{{ user.tweet.created }}</p> 
+                            <p>{{ user.tweet.source }}</p> 
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
