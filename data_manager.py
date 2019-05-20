@@ -12,25 +12,15 @@ import sys
 import argparse
 
 must_key = [
-    'id_str', 'following', 'follow_request_sent', 'name', 'screen_name',
-    'location', 'time_zone', 'description', 'url', 'protected', 'created_at',
-    'followers_count', 'friends_count', 'listed_count', 'favourites_count',
-    'statuses_count', 'verified', 'lang', 'contributors_enabled',
-    'profile_image_url', 'profile_banner_url', 'default_profile_image',
-    'default_profile'
+    'id_str', 'following', 'follow_request_sent', 'name', 'screen_name', 'location', 'time_zone', 'description', 'url', 'protected', 'created_at',
+    'followers_count', 'friends_count', 'listed_count', 'favourites_count', 'statuses_count', 'verified', 'lang', 'contributors_enabled', 'profile_image_url',
+    'profile_banner_url', 'default_profile_image', 'default_profile'
 ]
 must_json_key = ['entities', 'status']
 
 
 class DataManager():
-    def __init__(self,
-                 my_id,
-                 config,
-                 follower_update=False,
-                 user_json_update=False,
-                 df_update=False,
-                 list_update=False,
-                 list_user_update=False):
+    def __init__(self, my_id, config, follower_update=False, user_json_update=False, df_update=False, list_update=False, list_user_update=False):
         """
         follower_update: フォロー情報をアップデート
         user_json_update:
@@ -53,20 +43,18 @@ class DataManager():
             os.mkdir(os.path.join('./data', self.json_path))
         self.my_id = my_id
         # tweepy API
-        auth = tweepy.OAuthHandler(config['CONSUMER_KEY'],
-                                   config['CONSUMER_SECRET'])
-        auth.set_access_token(config['ACCESS_TOKEN'],
-                              config['ACCESS_TOKEN_SECRET'])
+        auth = tweepy.OAuthHandler(config['CONSUMER_KEY'], config['CONSUMER_SECRET'])
+        auth.set_access_token(config['ACCESS_TOKEN'], config['ACCESS_TOKEN_SECRET'])
         self.api = tweepy.API(auth, wait_on_rate_limit=True)
-        # follower, followii
+        # follower, followee
         self.follower_update = follower_update
         self.follower, self.follower_num = [], {}
-        self.followii, self.followii_num = [], {}
+        self.followee, self.followee_num = [], {}
         self._get_follower()
-        self._get_followii()
+        self._get_followee()
         # json getter
         self.user_json_update = user_json_update
-        self._download_user_info(list(set(self.follower) | set(self.followii)))
+        self._download_user_info(list(set(self.follower) | set(self.followee)))
         # user list
         self.list_update = list_update
         self.list_user_update = list_user_update
@@ -82,16 +70,11 @@ class DataManager():
 
     def _update_file(self, l, flag):
         for x in l:
-            if os.path.exists(
-                    os.path.join(self.data_path, self.json_path, f'{x}.json')):
-                with open(
-                        os.path.join(self.data_path, self.json_path,
-                                     f'{x}.json'), 'r') as f:
+            if os.path.exists(os.path.join(self.data_path, self.json_path, f'{x}.json')):
+                with open(os.path.join(self.data_path, self.json_path, f'{x}.json'), 'r') as f:
                     j = json.load(f)
                 j['followering'] = flag
-                with open(
-                        os.path.join(self.data_path, self.json_path,
-                                     f'{x}.json'), 'w') as f:
+                with open(os.path.join(self.data_path, self.json_path, f'{x}.json'), 'w') as f:
                     json.dump(j, f)
 
     def _get_follower(self):
@@ -99,16 +82,10 @@ class DataManager():
         if self.follower_update:
             print('_get_follower')
             tmp = list()
-            if os.path.exists(
-                    os.path.join(self.data_path, self.tsv_path,
-                                 'follower.tsv')):
-                with open(
-                        os.path.join(self.data_path, self.tsv_path,
-                                     'follower.tsv'), 'r') as f:
+            if os.path.exists(os.path.join(self.data_path, self.tsv_path, 'follower.tsv')):
+                with open(os.path.join(self.data_path, self.tsv_path, 'follower.tsv'), 'r') as f:
                     tmp = set([x.strip() for x in f if x != ''])
-            followers_ids = tweepy.Cursor(self.api.followers_ids,
-                                          id=self.my_id,
-                                          cursor=-1).items()
+            followers_ids = tweepy.Cursor(self.api.followers_ids, id=self.my_id, cursor=-1).items()
             for i, followers_id in enumerate(followers_ids):
                 self.follower.append(followers_id)
                 self.follower_num.update({followers_id: i})
@@ -118,61 +95,37 @@ class DataManager():
             removed = set(tmp) - set(self.follower)
             self._update_file(list(removed), False)
             # save
-            with open(
-                    os.path.join(self.data_path, self.tsv_path,
-                                 'follower.tsv'), 'w') as f:
+            with open(os.path.join(self.data_path, self.tsv_path, 'follower.tsv'), 'w') as f:
                 for x in self.follower:
                     f.write(f'{x}\n')
-            with open(
-                    os.path.join(self.data_path, self.tsv_path,
-                                 'follower_num.tsv'), 'w') as f:
+            with open(os.path.join(self.data_path, self.tsv_path, 'follower_num.tsv'), 'w') as f:
                 for k, v in self.follower_num.items():
                     f.write(f'{k}\t{v}\n')
         else:
-            with open(
-                    os.path.join(self.data_path, self.tsv_path,
-                                 'follower.tsv'), 'r') as f:
+            with open(os.path.join(self.data_path, self.tsv_path, 'follower.tsv'), 'r') as f:
                 self.follower = [x.strip() for x in f if x != '']
-            with open(
-                    os.path.join(self.data_path, self.tsv_path,
-                                 'follower_num.tsv'), 'r') as f:
-                self.follower_num = {
-                    x.strip().split('\t')[0]: int(x.strip().split('\t')[1])
-                    for x in f if x != ''
-                }
+            with open(os.path.join(self.data_path, self.tsv_path, 'follower_num.tsv'), 'r') as f:
+                self.follower_num = {x.strip().split('\t')[0]: int(x.strip().split('\t')[1]) for x in f if x != ''}
 
-    def _get_followii(self):
+    def _get_followee(self):
         '''フォロイーのID取得'''
         if self.follower_update:
-            print('_get_followii')
-            followii_ids = tweepy.Cursor(self.api.friends_ids,
-                                         id=self.my_id,
-                                         cursor=-1).items()
-            for i, followii_id in enumerate(followii_ids):
-                self.followii.append(followii_id)
-                self.followii_num.update({followii_id: i})
-            with open(
-                    os.path.join(self.data_path, self.tsv_path,
-                                 'followii.tsv'), 'w') as f:
-                for x in self.followii:
+            print('_get_followee')
+            followee_ids = tweepy.Cursor(self.api.friends_ids, id=self.my_id, cursor=-1).items()
+            for i, followee_id in enumerate(followee_ids):
+                self.followee.append(followee_id)
+                self.followee_num.update({followee_id: i})
+            with open(os.path.join(self.data_path, self.tsv_path, 'followee.tsv'), 'w') as f:
+                for x in self.followee:
                     f.write(f'{x}\n')
-            with open(
-                    os.path.join(self.data_path, self.tsv_path,
-                                 'followii_num.tsv'), 'w') as f:
-                for k, v in self.followii_num.items():
+            with open(os.path.join(self.data_path, self.tsv_path, 'followee_num.tsv'), 'w') as f:
+                for k, v in self.followee_num.items():
                     f.write(f'{k}\t{v}\n')
         else:
-            with open(
-                    os.path.join(self.data_path, self.tsv_path,
-                                 'followii.tsv'), 'r') as f:
-                self.followii = [x.strip() for x in f if x != '']
-            with open(
-                    os.path.join(self.data_path, self.tsv_path,
-                                 'followii_num.tsv'), 'r') as f:
-                self.followii_num = {
-                    x.strip().split('\t')[0]: int(x.strip().split('\t')[1])
-                    for x in f if x != ''
-                }
+            with open(os.path.join(self.data_path, self.tsv_path, 'followee.tsv'), 'r') as f:
+                self.followee = [x.strip() for x in f if x != '']
+            with open(os.path.join(self.data_path, self.tsv_path, 'followee_num.tsv'), 'r') as f:
+                self.followee_num = {x.strip().split('\t')[0]: int(x.strip().split('\t')[1]) for x in f if x != ''}
 
     def _download_user_info(self, l):
         '''ユーザ情報を取得しjsonにdumpしつつログを取る'''
@@ -182,9 +135,7 @@ class DataManager():
                 for i, u in enumerate(tqdm(l)):
                     if int(self.user_json_update) == 2:
                         # non update
-                        if os.path.exists(
-                                os.path.join(self.data_path, self.json_path,
-                                             f'{u}.json')):
+                        if os.path.exists(os.path.join(self.data_path, self.json_path, f'{u}.json')):
                             continue
                     fl.write('[{}][{}]user:{}\n'.format(datetime.now(), i, u))
                     try:
@@ -192,9 +143,7 @@ class DataManager():
                     except tweepy.error.TweepError:
                         # 凍結されたアカウント等
                         continue
-                    with open(
-                            os.path.join(self.data_path, self.json_path,
-                                         f'{u}.json'), 'w') as f:
+                    with open(os.path.join(self.data_path, self.json_path, f'{u}.json'), 'w') as f:
                         json.dump(user._json, f)
 
     def _get_twlog(self):
@@ -213,27 +162,20 @@ class DataManager():
     def _add_data(self, data_df):
         '''pandasに追加するデータ'''
         # descriptionの長さ
-        data_df['description_length'] = data_df.description.apply(
-            lambda x: len(x) if type(x) == str else 0)
+        data_df['description_length'] = data_df.description.apply(lambda x: len(x) if type(x) == str else 0)
         # アカウント作成から今日までの日数
-        data_df['diff_created_at'] = data_df.created_at.apply(lambda x: (
-            pd.Timestamp.utcnow() - x).days)
+        data_df['diff_created_at'] = data_df.created_at.apply(lambda x: (pd.Timestamp.utcnow() - x).days)
         # 最新ツイート投稿から今日までの日数
-        data_df[
-            'diff_toptweet_created_at'] = data_df.toptweet_created_at.apply(
-                lambda x: (pd.Timestamp.utcnow() - x).days)
+        data_df['diff_toptweet_created_at'] = data_df.toptweet_created_at.apply(lambda x: (pd.Timestamp.utcnow() - x).days)
         # SNの長さ
         data_df['sn_length'] = data_df.screen_name.apply(lambda x: len(x))
         # followerかどうか(フォローしているかどうかはAPIが返してくれる)
-        data_df['followed'] = data_df.id_str.apply(lambda x: x in self.follower
-                                                   )
+        data_df['followed'] = data_df.id_str.apply(lambda x: x in self.follower)
         # 自分が入れたリスト
         data_df['joined_list'] = data_df.id_str.apply(self._list_check)
         # フォロー、フォロワーとなった順番
-        data_df['follower_number'] = data_df.id_str.apply(
-            lambda x: self.follower_num.get(x, 9999999))
-        data_df['followii_number'] = data_df.id_str.apply(
-            lambda x: self.followii_num.get(x, 9999999))
+        data_df['follower_number'] = data_df.id_str.apply(lambda x: self.follower_num.get(x, 9999999))
+        data_df['followee_number'] = data_df.id_str.apply(lambda x: self.followee_num.get(x, 9999999))
         return data_df
 
     def _convert_pandas(self):
@@ -245,9 +187,7 @@ class DataManager():
         print('_convert_pandas')
         twlog = self._get_twlog()
         all_data_list = []
-        for x in tqdm(
-                Path(os.path.join(self.data_path,
-                                  self.json_path)).glob('*.json')):
+        for x in tqdm(Path(os.path.join(self.data_path, self.json_path)).glob('*.json')):
             j = json.load(x.open('r'))
             d = {}
             for k, v in j.items():
@@ -256,23 +196,18 @@ class DataManager():
                 elif k in must_json_key:
                     if k == 'entities':
                         # urlのURL展開結果を保存
-                        for i, url_data in enumerate(
-                                v.get('url', {}).get('urls', [])):
+                        for i, url_data in enumerate(v.get('url', {}).get('urls', [])):
                             for urlk, urlv in url_data.items():
                                 if urlk == 'expanded_url':
                                     d['expanded_url_{}'.format(i)] = urlv
                         # bio内のURL展開結果を保存
-                        for i, url_data in enumerate(
-                                v.get('description', {}).get('urls', [])):
+                        for i, url_data in enumerate(v.get('description', {}).get('urls', [])):
                             for urlk, urlv in url_data.items():
                                 if urlk == 'expanded_url':
-                                    d['description_expanded_url_{}'.format(
-                                        i)] = urlv
+                                    d['description_expanded_url_{}'.format(i)] = urlv
                         # 個数も保存
-                        d['expanded_url_num'] = len(
-                            v.get('url', {}).get('urls', []))
-                        d['description_expanded_url_num'] = len(
-                            v.get('description', {}).get('urls', []))
+                        d['expanded_url_num'] = len(v.get('url', {}).get('urls', []))
+                        d['description_expanded_url_num'] = len(v.get('description', {}).get('urls', []))
                     elif k == 'status':
                         # 最新ツイートの情報も保存（）
                         d['toptweet_created_at'] = v['created_at']
@@ -293,8 +228,7 @@ class DataManager():
         data_df = pd.DataFrame(all_data_list)
         data_df['created_at'] = pd.to_datetime(data_df['created_at'], utc=True)
         data_df['get_date'] = pd.to_datetime(data_df['get_date'], utc=True)
-        data_df['toptweet_created_at'] = pd.to_datetime(
-            data_df['toptweet_created_at'], utc=True)
+        data_df['toptweet_created_at'] = pd.to_datetime(data_df['toptweet_created_at'], utc=True)
         for x in ['toptweet_id', 'id_str']:
             data_df[x] = data_df[x].astype('object')
         data_df = self._add_data(data_df)
@@ -306,35 +240,24 @@ class DataManager():
     def _get_list(self):
         if self.list_update:
             print('_get_list')
-            with open(
-                    os.path.join(self.data_path, self.tsv_path,
-                                 'user_list.tsv'), 'w') as f:
+            with open(os.path.join(self.data_path, self.tsv_path, 'user_list.tsv'), 'w') as f:
                 for twilist in self.api.lists_all(screen_name=self.my_id):
                     f.write(f'{twilist.name}\t{twilist.slug}\n')
                     self.user_list.append([twilist.name, twilist.slug])
         else:
-            with open(
-                    os.path.join(self.data_path, self.tsv_path,
-                                 'user_list.tsv'), 'r') as f:
+            with open(os.path.join(self.data_path, self.tsv_path, 'user_list.tsv'), 'r') as f:
                 for x in f:
                     self.user_list.append(x.strip().split('\t'))
 
     def _get_list_users(self, slug):
         if self.list_user_update:
             print(f'_get_list_users:{slug[0]}')
-            with open(
-                    os.path.join(self.data_path, self.tsv_path,
-                                 f'list_{slug[1]}.tsv'), 'w') as f:
-                for member in tweepy.Cursor(
-                        self.api.list_members,
-                        slug=slug[1],
-                        owner_screen_name=self.my_id).items():
+            with open(os.path.join(self.data_path, self.tsv_path, f'list_{slug[1]}.tsv'), 'w') as f:
+                for member in tweepy.Cursor(self.api.list_members, slug=slug[1], owner_screen_name=self.my_id).items():
                     self.list_dic[slug[1]].append(member.id_str)
                     f.write(f'{member.id_str}\n')
         else:
-            with open(
-                    os.path.join(self.data_path, self.tsv_path,
-                                 f'list_{slug[1]}.tsv'), 'r') as f:
+            with open(os.path.join(self.data_path, self.tsv_path, f'list_{slug[1]}.tsv'), 'r') as f:
                 for x in f:
                     self.list_dic[slug[1]].append(x.strip())
 
@@ -365,21 +288,16 @@ class DataManager():
         ls = set(l)
         # 追加
         for x in list(ls - slugs):
-            self.api.add_list_member(user_id=uid,
-                                     slug=x,
-                                     owner_screen_name=self.my_id)
+            self.api.add_list_member(user_id=uid, slug=x, owner_screen_name=self.my_id)
             self.user_list_dic[uid].append(x)
         # 削除
         for x in list(slugs - ls):
-            self.api.remove_list_member(user_id=uid,
-                                        slug=x,
-                                        owner_screen_name=self.my_id)
+            self.api.remove_list_member(user_id=uid, slug=x, owner_screen_name=self.my_id)
             self.user_list_dic[uid].remove(x)
         self.save()
 
     def save(self):
-        self.data_df['joined_list'] = self.data_df.id_str.apply(
-            lambda x: self.user_list_dic[x])
+        self.data_df['joined_list'] = self.data_df.id_str.apply(lambda x: self.user_list_dic[x])
         with open(os.path.join(self.data_path, 'twdata.pkl'), 'wb') as f:
             pickle.dump(self.data_df, f)
 
@@ -406,7 +324,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
     print(args)
     print('data making')
-    DM = DataManager(my_id, config, args.follower_update,
-                     args.user_json_update, args.df_update, args.list_update,
-                     args.list_user_update)
+    DM = DataManager(my_id, config, args.follower_update, args.user_json_update, args.df_update, args.list_update, args.list_user_update)
     print('data managed')

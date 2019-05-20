@@ -118,7 +118,7 @@ python data_manager.py --follower_update --list_user_update --df_update --user_j
 |sn_length|SNの長さ|int|12|
 |joined_list|入っているリスト|list|[hoge, piyo]|
 |follower_number|フォロワーになった順にならべた時のid|int|20|
-|followii_number|フォローした順にならべた時のid|int|20|
+|followee_number|フォローした順にならべた時のid|int|20|
 
 　  
 Columnを追加する場合は `data_manager._add_data` 辺りをよしなに編集
@@ -131,7 +131,7 @@ python data_manager.py --df_update
  - data_manager.py: フォロワー情報のダウンロード、書き込み、読み込み
  - utils.py: flaskに渡すテーブルとか作ったりするやつ
  - static
-     - followii.jpg: フォローされてたら出るやつ
+     - followee.jpg: フォローされてたら出るやつ
      - key.jpg: 鍵垢だったら出るやつ
      - verified.jpg: 認証アカウントだったら出るやつ
      - get.js: なんかget周りをAjaxしてくれる色々
