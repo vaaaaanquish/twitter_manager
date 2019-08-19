@@ -3,6 +3,7 @@ from data_manager import DataManager
 from utils import get_users, reconv_list
 import json
 import os
+import argparse
 import sys
 app = Flask(__name__)
 
@@ -79,7 +80,13 @@ def follow():
 
 if __name__ == "__main__":
     try:
-        app.run(debug=True)
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--host', default=None, type=str)
+        parser.add_argument('--port', default=None, type=str)
+        parser.add_argument('--debug', default=True, type=bool)
+        args = parser.parse_args()
+        print(args)
+        app.run(debug=args.debug, host=args.host, port=args.port)
     except KeyboardInterrupt:
         dm.save()
     except Exception:
