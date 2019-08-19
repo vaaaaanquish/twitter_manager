@@ -321,8 +321,13 @@ if __name__ == '__main__':
     parser.add_argument('--list_user_update', action='store_true')
     parser.add_argument('--df_update', action='store_true')
     parser.add_argument('--user_json_update', default=0, type=int)
+    parser.add_argument('--output_csv', action='store_true')
     args = parser.parse_args()
     print(args)
     print('data making')
     DM = DataManager(my_id, config, args.follower_update, args.user_json_update, args.df_update, args.list_update, args.list_user_update)
+    if args.output_csv:
+        with open(os.path.join(DM.data_path, 'twdata.pkl'), 'rb') as f:
+            df = pickle.load(f)
+            df.to_csv(os.path.join(DM.data_path, 'twdata.csv'), index=False)
     print('data managed')
