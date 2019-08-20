@@ -33,9 +33,21 @@ data_managerでAPIを利用しjsonを手元に落として、pandas化
 ```
 python data_manager.py --follower_update --list_update --list_user_update --df_update --user_json_update=1
 ```
+
+Excel等の他のアプリで読みたい場合はCSVファイルを出力
+```
+python data_manager.py --output_csv
+```
+
 Flask Appを立ててフォロワー管理
 ```
 python app.py
+```
+
+リモートマシンやDockerコンテナ内で動かす時には、ホストIPアドレスを `0.0.0.0` にしておけばアクセスできる
+（デフォルトの`127.0.0.1`だと外部のクライアントからアクセスできない）
+```
+python app.py --host 0.0.0.0 
 ```
 
 # data manager args
