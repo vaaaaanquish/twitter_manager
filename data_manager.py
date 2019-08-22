@@ -87,8 +87,8 @@ class DataManager():
                     tmp = set([x.strip() for x in f if x != ''])
             followers_ids = tweepy.Cursor(self.api.followers_ids, id=self.my_id, cursor=-1).items()
             for i, followers_id in enumerate(followers_ids):
-                self.follower.append(followers_id)
-                self.follower_num.update({followers_id: i})
+                self.follower.append(str(followers_id))
+                self.follower_num.update({str(followers_id): str(i)})
             # diff
             newfd = set(self.follower) - set(tmp)
             self._update_file(list(newfd), True)
@@ -105,7 +105,7 @@ class DataManager():
             with open(os.path.join(self.data_path, self.tsv_path, 'follower.tsv'), 'r') as f:
                 self.follower = [x.strip() for x in f if x != '']
             with open(os.path.join(self.data_path, self.tsv_path, 'follower_num.tsv'), 'r') as f:
-                self.follower_num = {x.strip().split('\t')[0]: int(x.strip().split('\t')[1]) for x in f if x != ''}
+                self.follower_num = {x.strip().split('\t')[0]: x.strip().split('\t')[1] for x in f if x != ''}
 
     def _get_followee(self):
         '''フォロイーのID取得'''
@@ -113,8 +113,8 @@ class DataManager():
             print('_get_followee')
             followee_ids = tweepy.Cursor(self.api.friends_ids, id=self.my_id, cursor=-1).items()
             for i, followee_id in enumerate(followee_ids):
-                self.followee.append(followee_id)
-                self.followee_num.update({followee_id: i})
+                self.followee.append(str(followee_id))
+                self.followee_num.update({str(followee_id): str(i)})
             with open(os.path.join(self.data_path, self.tsv_path, 'followee.tsv'), 'w') as f:
                 for x in self.followee:
                     f.write(f'{x}\n')
@@ -125,7 +125,7 @@ class DataManager():
             with open(os.path.join(self.data_path, self.tsv_path, 'followee.tsv'), 'r') as f:
                 self.followee = [x.strip() for x in f if x != '']
             with open(os.path.join(self.data_path, self.tsv_path, 'followee_num.tsv'), 'r') as f:
-                self.followee_num = {x.strip().split('\t')[0]: int(x.strip().split('\t')[1]) for x in f if x != ''}
+                self.followee_num = {x.strip().split('\t')[0]: x.strip().split('\t')[1] for x in f if x != ''}
 
     def _download_user_info(self, l):
         '''ユーザ情報を取得しjsonにdumpしつつログを取る'''
@@ -157,6 +157,7 @@ class DataManager():
 
     def _list_check(self, user_id):
         '''idが入っているListのリストを返す'''
+        user_id = str(user_id)
         return [x[1] for x in self.user_list if user_id in self.list_dic[x[0]]]
 
     def _add_data(self, data_df):
@@ -273,17 +274,20 @@ class DataManager():
         return dic
 
     def unfollow(self, x):
+        x = str(x)
         self.api.destroy_friendship(x)
         self.data_df.loc[self.data_df['id_str'] == x, 'following'] = False
         self.save()
 
     def follow(self, x):
+        x = str(x)
         self.api.create_friendship(x, True)
         self.data_df.loc[self.data_df['id_str'] == x, 'following'] = True
         self.save()
 
     def list_manage(self, uid, l):
         '''リストに追加削除'''
+        uid = str(uid)
         slugs = set(self.user_list_dic[uid])
         ls = set(l)
         # 追加
