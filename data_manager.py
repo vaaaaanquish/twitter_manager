@@ -175,8 +175,8 @@ class DataManager():
         # 自分が入れたリスト
         data_df['joined_list'] = data_df.id_str.apply(self._list_check)
         # フォロー、フォロワーとなった順番
-        data_df['follower_number'] = data_df.id_str.apply(lambda x: self.follower_num.get(x, 9999999))
-        data_df['followee_number'] = data_df.id_str.apply(lambda x: self.followee_num.get(x, 9999999))
+        data_df['follower_number'] = data_df.id_str.apply(lambda x: int(self.follower_num.get(x, 9999999)))
+        data_df['followee_number'] = data_df.id_str.apply(lambda x: int(self.followee_num.get(x, 9999999)))
         return data_df
 
     def _convert_pandas(self):
