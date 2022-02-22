@@ -1,4 +1,4 @@
-tweepy
+tweepy<4.0.0
 tqdm
 pandas
 feather-format
